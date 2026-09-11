@@ -1,0 +1,117 @@
+{
+  "namespace": "client_gui",
+  "main_screen": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "controls": [
+      {
+        "welcome_label@common.label": {
+          "text": "Welcome to Minecraft Client",
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "offset": [0, 50]
+        }
+      },
+      {
+        "play_button@common.button": {
+          "text": "Play Game",
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "offset": [0, -50]
+        }
+      },
+      {
+        "mods_button@common.button": {
+          "text": "Mods & Cheats",
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "offset": [0, 0]
+        }
+      },
+      {
+        "settings_button@common.button": {
+          "text": "Settings",
+          "anchor_from": "center",
+          "anchor_to": "center",
+          "offset": [0, 50]
+        }
+      }
+    ]
+  },
+  "mods_screen": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "controls": [
+      {
+        "title_label@common.label": {
+          "text": "Mods & Cheats",
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "offset": [0, 30]
+        }
+      },
+      {
+        "fly_through_walls_toggle": {
+          "type": "toggle",
+          "text": "Fly Through Walls",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 100]
+        }
+      },
+      {
+        "creative_flight_toggle": {
+          "type": "toggle",
+          "text": "Creative Flight",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 150]
+        }
+      },
+      {
+        "speed_boost_toggle": {
+          "type": "toggle",
+          "text": "Speed Boost",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 200]
+        }
+      },
+      {
+        "night_vision_toggle": {
+          "type": "toggle",
+          "text": "Night Vision",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 250]
+        }
+      },
+      {
+        "xray_toggle": {
+          "type": "toggle",
+          "text": "X-Ray Vision",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 300]
+        }
+      },
+      {
+        "instant_break_toggle": {
+          "type": "toggle",
+          "text": "Instant Break",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "offset": [50, 350]
+        }
+      },
+      {
+        "back_button@common.button": {
+          "text": "Back",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "offset": [0, -30]
+        }
+      }
+    ]
+  }
+}
