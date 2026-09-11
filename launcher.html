@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Bedrock Launcher - Direct Launch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #3498db;
+            --dark: #1a1a1a;
+            --darker: #0d0d0d;
+            --text: #ffffff;
+            --text-secondary: #bdc3c7;
+            --border: #2c3e50;
+            --danger: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .launcher-panel {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 52, 96, 0.95) 100%);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .launcher-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .mods-section {
+            background: rgba(46, 204, 113, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .mods-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .mods-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .mod-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .mod-checkbox:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .mod-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .mod-checkbox label {
+            margin: 0 !important;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            grid-column: span 2;
+        }
+
+        .btn-launch:hover {
+            background: linear-gradient(135deg, #52d97a 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--secondary);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(46, 204, 113, 0.1);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .status-message.error {
+            background: rgba(231, 76, 60, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .status-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .addon-info {
+            background: rgba(46, 204, 113, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .addon-info strong {
+            color: var(--primary);
+        }
+
+        .command-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--primary);
+            overflow-x: auto;
+            word-break: break-all;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .command-display:hover {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: var(--primary);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .launcher-panel {
+                padding: 25px;
+            }
+
+            .mods-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-launch {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">⛏️</div>
+            <h1>MINECRAFT BEDROCK</h1>
+            <p>Direct Launch with Add-On Mods</p>
+        </div>
+
+        <div class="launcher-panel">
+            <div class="launcher-title">🚀 LAUNCHER CONFIGURATION</div>
+
+            <div class="addon-info">
+                <strong>✓ Add-On Status:</strong> Ready for deployment<br>
+                <strong>Version:</strong> 1.0.0 (Bedrock 1.20.0+)<br>
+                <strong>Type:</strong> Behavior Pack + Resource Pack
+            </div>
+
+            <form id="launcherForm">
+                <!-- Server/Realm Info -->
+                <div class="input-group">
+                    <label for="serverName">🖥️ Server/Realm Name</label>
+                    <input type="text" id="serverName" placeholder="e.g., My Awesome Server" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="serverAddress">📍 Server Address (IP or Realm Code)</label>
+                    <input type="text" id="serverAddress" placeholder="e.g., 192.168.1.100:19132 or realm-code" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="playerName">👤 Player Name</label>
+                    <input type="text" id="playerName" placeholder="Your Minecraft username" required>
+                </div>
+
+                <!-- Mods Selection -->
+                <div class="mods-section">
+                    <div class="mods-title">🎮 SELECT MODS TO ENABLE</div>
+                    <div class="mods-grid">
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_fly" value="fly_through_walls">
+                            <label for="mod_fly">👻 Fly Through Walls</label>
+                        </label>
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_flight" value="creative_flight">
+                            <label for="mod_flight">🕊️ Creative Flight</label>
+                        </label>
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_speed" value="speed_boost">
+                            <label for="mod_speed">⚡ Speed Boost</label>
+                        </label>
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_night" value="night_vision">
+                            <label for="mod_night">👁️ Night Vision</label>
+                        </label>
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_xray" value="xray">
+                            <label for="mod_xray">🔍 X-Ray Vision</label>
+                        </label>
+                        <label class="mod-checkbox">
+                            <input type="checkbox" id="mod_break" value="instant_break">
+                            <label for="mod_break">💥 Instant Break</label>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Game Mode Selection -->
+                <div class="input-group">
+                    <label for="gameMode">🎯 Game Mode</label>
+                    <select id="gameMode" required>
+                        <option value="">Select Game Mode</option>
+                        <option value="survival">Survival</option>
+                        <option value="creative">Creative</option>
+                        <option value="adventure">Adventure</option>
+                        <option value="spectator">Spectator</option>
+                    </select>
+                </div>
+
+                <!-- Difficulty -->
+                <div class="input-group">
+                    <label for="difficulty">⚔️ Difficulty</label>
+                    <select id="difficulty" required>
+                        <option value="">Select Difficulty</option>
+                        <option value="peaceful">Peaceful</option>
+                        <option value="easy">Easy</option>
+                        <option value="normal">Normal</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Generated Command -->
+                <div id="commandSection" style="display: none;">
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                        <label style="display: block; margin-bottom: 10px; font-size: 14px; font-weight: 600; color: var(--text-secondary);">📋 INITIALIZATION COMMANDS (Run in-game):</label>
+                        <div class="command-display" id="commandDisplay"></div>
+                        <button type="button" class="copy-btn" onclick="copyCommand()">📋 Copy Commands</button>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="buttons">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                    <button type="submit" class="btn btn-launch">🚀 LAUNCH WITH ADD-ON</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>💡 <strong>QUICK START:</strong></p>
+            <p>1. Upload the add-on files to your server</p>
+            <p>2. Fill in your server details above</p>
+            <p>3. Select your mods and game settings</p>
+            <p>4. Click LAUNCH - Copy and paste the commands in-game</p>
+            <p>📖 <a href="BEDROCK_INSTALLATION.md" target="_blank">View Installation Guide</a> | 
+            <a href="README.md" target="_blank">View Documentation</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Store configuration
+        const config = {
+            serverName: '',
+            serverAddress: '',
+            playerName: '',
+            mods: [],
+            gameMode: '',
+            difficulty: ''
+        };
+
+        // Form submission
+        document.getElementById('launcherForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            config.serverName = document.getElementById('serverName').value;
+            config.serverAddress = document.getElementById('serverAddress').value;
+            config.playerName = document.getElementById('playerName').value;
+            config.gameMode = document.getElementById('gameMode').value;
+            config.difficulty = document.getElementById('difficulty').value;
+
+            // Get selected mods
+            config.mods = [];
+            document.querySelectorAll('.mod-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                config.mods.push(checkbox.value);
+            });
+
+            // Generate commands
+            generateCommands();
+            
+            // Show success message
+            showStatus('✅ Configuration loaded! Copy the commands below and paste them in-game.', 'success');
+        });
+
+        function generateCommands() {
+            let commands = `# Minecraft Client GUI - Mod Initialization\n`;
+            commands += `# Server: ${config.serverName}\n`;
+            commands += `# Player: ${config.playerName}\n`;
+            commands += `# Time: ${new Date().toLocaleString()}\n\n`;
+
+            // Initialize add-on
+            commands += `# Step 1: Initialize the add-on\n`;
+            commands += `/function init\n\n`;
+
+            // Set game mode
+            commands += `# Step 2: Set game mode\n`;
+            commands += `/gamemode ${config.gameMode}\n\n`;
+
+            // Set difficulty
+            commands += `# Step 3: Set difficulty\n`;
+            commands += `/difficulty ${config.difficulty}\n\n`;
+
+            // Enable selected mods
+            if (config.mods.length > 0) {
+                commands += `# Step 4: Enable selected mods\n`;
+                config.mods.forEach(mod => {
+                    commands += `/function mods/${mod}\n`;
+                });
+                commands += `\n`;
+            }
+
+            // Additional info
+            commands += `# Step 5: View mod menu (optional)\n`;
+            commands += `/function menu\n\n`;
+
+            commands += `# ⚡ To disable all mods:\n`;
+            commands += `/function mods/disable_all\n`;
+
+            // Display commands
+            document.getElementById('commandDisplay').textContent = commands;
+            document.getElementById('commandSection').style.display = 'block';
+
+            // Log to console
+            console.log('Generated Commands:\n', commands);
+        }
+
+        function copyCommand() {
+            const text = document.getElementById('commandDisplay').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('✅ Commands copied to clipboard! Paste them in-game now.', 'success');
+                
+                // Create temporary visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = 'var(--primary-dark)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'var(--primary)';
+                }, 2000);
+            }).catch(() => {
+                showStatus('❌ Failed to copy. Try manual copy.', 'error');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('launcherForm').reset();
+            document.getElementById('commandSection').style.display = 'none';
+            document.getElementById('statusMessage').classList.remove('show');
+            config.mods = [];
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type} show`;
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusEl.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Prevent checkbox label conflict
+        document.querySelectorAll('.mod-checkbox label:not(:first-child)').forEach(label => {
+            label.style.margin = '0';
+            label.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+
+        // Set default values
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('playerName').value = localStorage.getItem('playerName') || '';
+            document.getElementById('serverName').value = localStorage.getItem('serverName') || '';
+        });
+
+        // Save player name for next time
+        document.getElementById('playerName').addEventListener('change', () => {
+            localStorage.setItem('playerName', document.getElementById('playerName').value);
+        });
+
+        document.getElementById('serverName').addEventListener('change', () => {
+            localStorage.setItem('serverName', document.getElementById('serverName').value);
+        });
+    </script>
+</body>
+</html>
